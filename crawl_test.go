@@ -6,31 +6,24 @@ import (
 )
 
 func TestNormalizeUrl(t *testing.T) {
-	result, err := NormalizeUrl("https://chatgpt.com/?oai-dm=1")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://chatgpt.com", result, "wrong result")
+	test := []struct {
+		name, inputURL, expected string
+	}{
+		{"1", "https://chatgpt.com/?oai-dm=1", "https://chatgpt.com"},
+		{"2", "https://wagslane.dev", "https://wagslane.dev"},
+		{"3", "https://api.example.com:3000/users/12345?status=active&sort=desc#details", "https://api.example.com/users/12345"},
+		{"4", "https://wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon/", "https://wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon"},
+		{"5", "https://wagslane.dev/posts/guard-keyword-error-handling-golang/", "https://wagslane.dev/posts/guard-keyword-error-handling-golang"},
+		{"6", "https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem/", "https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem"},
+		{"7", "https://wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions", "https://wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions"},
+	}
 
-	result, err = NormalizeUrl("https://wagslane.dev")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://wagslane.dev", result, "wrong result")
+	for _, testcase := range test {
+		t.Run(testcase.name, func(t *testing.T) {
+			result, err := NormalizeUrl(testcase.inputURL)
+			assert.NoError(t, err, "must be valid and pass error test")
+			assert.Equalf(t, testcase.expected, result, "wrong result")
+		})
+	}
 
-	result, err = NormalizeUrl("https://api.example.com:3000/users/12345?status=active&sort=desc#details")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://api.example.com/users/12345", result, "wrong result")
-
-	result, err = NormalizeUrl("https://wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon/")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://wagslane.dev/posts/a-case-against-a-case-for-the-book-of-mormon", result, "wrong result")
-
-	result, err = NormalizeUrl("https://wagslane.dev/posts/guard-keyword-error-handling-golang/")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://wagslane.dev/posts/guard-keyword-error-handling-golang", result, "wrong result")
-
-	result, err = NormalizeUrl("https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem/")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://wagslane.dev/posts/college-a-solution-in-search-of-a-problem", result, "wrong result")
-
-	result, err = NormalizeUrl("https://wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions")
-	assert.NoError(t, err, "must be valid and pass error test")
-	assert.Equalf(t, "https://wagslane.dev/posts/continuous-deployments-arent-continuous-disruptions", result, "wrong result")
 }
